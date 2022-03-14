@@ -98,6 +98,15 @@
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
+    "league/flysystem": {
+        "version": "2.4.3"
+    },
+    "league/flysystem-bundle": {
+        "version": "2.2.0"
+    },
+    "league/mime-type-detection": {
+        "version": "1.9.0"
+    },
     "monolog/monolog": {
         "version": "2.4.0"
     },

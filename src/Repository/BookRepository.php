@@ -46,7 +46,7 @@ class BookRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return Book[] Returns an array of Book objects
+    //  * @return BookDto[] Returns an array of BookDto objects
     //  */
     /*
     public function findByExampleField($value)
@@ -63,7 +63,7 @@ class BookRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Book
+    public function findOneBySomeField($value): ?BookDto
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.exampleField = :val')

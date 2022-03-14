@@ -1,0 +1,6 @@
+App\Form\Model\BookDto:
+  attributes:
+    id:
+      groups: ['book']
+    title:
+      groups: ['book']
