@@ -83,7 +83,7 @@ class BooksController extends AbstractFOSRestController
         if($form->isValid()){
             // Remove categories
             foreach($originalCategories as $originalCategoryDto){
-                if(!in_array($originalCategoryDto, $bookDto->categories)){
+                if(!in_array($originalCategoryDto, $bookDto->categories, true)){
                     $category = $categoryRepository->find($originalCategoryDto->id);
                     $book->removeCategory($category);
                 }

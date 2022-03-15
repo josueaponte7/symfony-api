@@ -14,7 +14,7 @@ class BookDto
 
     public function __construct()
     {
-        $this->categories = [];
+        $this->categories = array();
     }
 
     public static function createFromBook(Book $book): self
