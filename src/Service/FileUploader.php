@@ -6,7 +6,7 @@ use League\Flysystem\FilesystemOperator;
 
 class FileUploader
 {
-    private $defaultStorage;
+    private FilesystemOperator $defaultStorage;
     public function __construct(FilesystemOperator $defaultStorage)
     {
         $this->defaultStorage = $defaultStorage;
