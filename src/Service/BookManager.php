@@ -44,4 +44,11 @@ class BookManager
         $this->em->refresh($book);
         return $book;
     }
+
+    public function delete(Book $book): void
+    {
+        $this->em->remove($book);
+        $this->em->flush();
+
+    }
 }
