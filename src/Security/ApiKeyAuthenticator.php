@@ -18,11 +18,11 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
 {
 
     private UserRepository $userRepository;
-
-    public function __construct(UserRepository $userRepository)
+    private $appApiToken;
+    public function __construct(string $appApiToken, UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
-
+        $this->appApiToken = $appApiToken;
     }
     /**
      * Called on every request to decide if this authenticator should be
@@ -46,7 +46,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
             // Code 401 "Unauthorized"
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
-        if($apiToken !== 'PRUEBA'){
+        if($apiToken !== $this->appApiToken){
             throw new CustomUserMessageAuthenticationException('');
         }
         return new SelfValidatingPassport(new UserBadge('josue'));
