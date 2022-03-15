@@ -1,8 +1,10 @@
 App\Entity\Book:
   attributes:
     id:
-      groups: ['book']
+        groups: ['book']
     title:
         groups: ['book']
     image:
-        groups: [ 'book' ]
+        groups: ['book']
+    categories:
+        groups: ['book']
