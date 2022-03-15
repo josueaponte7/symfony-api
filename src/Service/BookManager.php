@@ -16,6 +16,11 @@ class BookManager
         $this->bookRepository = $bookRepository;
     }
 
+    public function getRepository():BookRepository
+    {
+        return $this->bookRepository;
+    }
+
     public function find(int $id): ?Book
     {
         return $this->bookRepository->find($id);

@@ -19,9 +19,9 @@ class BooksController extends AbstractFOSRestController
      * @Rest\Get(path="/books")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      */
-    public function list(BookRepository $bookRepository): array
+    public function list(BookManager $bookManager): array
     {
-        return $bookRepository->findAll();
+        return $bookManager->getRepository()->findAll();
     }
 
     /**

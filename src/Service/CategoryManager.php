@@ -16,6 +16,11 @@ class CategoryManager
         $this->categoryRepository = $categoryRepository;
     }
 
+    public function getRepository(): CategoryRepository
+    {
+        return $this->categoryRepository;
+    }
+
     public function find(int $id): ?Category
     {
         return $this->categoryRepository->find($id);
