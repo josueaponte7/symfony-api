@@ -8,6 +8,7 @@ use App\Entity\Book;
 use App\Form\Model\BookDto;
 use App\Form\Type\BookFormType;
 use App\Repository\BookRepository;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -32,16 +33,13 @@ class BooksController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      * @throws FilesystemException
      */
-    public function create(EntityManagerInterface $em, Request $request, FilesystemOperator $defaultStorage)
+    public function create(EntityManagerInterface $em, Request $request, FileUploader $fileUploader)
     {
         $bookDto = new BookDto();
         $form = $this->createForm(BookFormType::class, $bookDto);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
-            $extension = explode("/", mime_content_type($bookDto->base64Image))[1];
-            $data = explode(",", $bookDto->base64Image);
-            $filename = sprintf('%s.%s', uniqid('book_', true), $extension);
-            $defaultStorage->write($filename, base64_decode($data[1]));
+            $filename = $fileUploader->uploaderBase64File($bookDto->base64Image);
             $book = new Book();
             $book->setTitle($bookDto->title);
             $book->setImage($filename);
