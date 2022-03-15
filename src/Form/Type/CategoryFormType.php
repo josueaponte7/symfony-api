@@ -13,6 +13,7 @@ class CategoryFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('id', TextType::class)
             ->add('name', TextType::class);
     }
 
@@ -24,12 +25,12 @@ class CategoryFormType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return '';
     }
 
-    public function getName()
+    public function getName(): string
     {
         return '';
     }

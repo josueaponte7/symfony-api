@@ -67,10 +67,8 @@ class BooksController extends AbstractFOSRestController
             throw $this->createNotFoundException('Book not found');
         }
         $bookDto = BookDto::createFromBook($book);
+
         $originalCategories = new ArrayCollection();
-        // Se obtinen las categorias del libro
-        // se crea la categoria y se añade al libro en $bookDto->categories[]
-        // tambien  se agrega a $originalCategories->add($categoryDto); para tenerlo en el arreglo
         foreach ($book->getCategories() as $category){
             $categoryDto = CategoryDto::createFromCategory($category);
             $bookDto->categories[] = $categoryDto;
@@ -102,16 +100,16 @@ class BooksController extends AbstractFOSRestController
                     }
                     $book->addCategory($category);
                 }
-                $book->setTitle($bookDto->title);
-                if($bookDto->base64Image){
-                    $filename = $fileUploader->uploaderBase64File($bookDto->base64Image);
-                    $book->setImage($filename);
-                }
-                $em->persist($book);
-                $em->flush();
-                return $book;
             }
-            return $form;
+            $book->setTitle($bookDto->title);
+            if($bookDto->base64Image){
+                $filename = $fileUploader->uploaderBase64File($bookDto->base64Image);
+                $book->setImage($filename);
+            }
+            $em->persist($book);
+            $em->flush();
+            return $book;
         }
+        return $form;
     }
 }
