@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BooksController extends AbstractFOSRestController
 {
-
+    public const BOOK_NOT_FOUND = 'Book not found';
     /**
      * @Rest\Get(path="/books")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
@@ -38,6 +38,19 @@ class BooksController extends AbstractFOSRestController
     }
 
     /**
+     * @Rest\Get(path="/books/{id}", requirements={"id"="\d+"})
+     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getSigleBook(int $id, BookManager $bookManager)
+    {
+        $book = $bookManager->find($id);
+        if(!$book){
+            return View::create(BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
+        }
+        return $book;
+    }
+
+    /**
      * @Rest\Post(path="/books/{id}", requirements={"id"="\d+"})
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      */
@@ -45,7 +58,7 @@ class BooksController extends AbstractFOSRestController
     {
         $book = $bookManager->find($id);
         if(!$book){
-            return View::create('Book not found', Response::HTTP_BAD_REQUEST);
+            return View::create(BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         [$book, $error] = ($bookFormProcessor)($book, $request);
 
@@ -62,7 +75,7 @@ class BooksController extends AbstractFOSRestController
     {
         $book = $bookManager->find($id);
         if(!$book){
-            return View::create('Book not found', Response::HTTP_BAD_REQUEST);
+            return View::create(BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
        $bookManager->delete($book);
 

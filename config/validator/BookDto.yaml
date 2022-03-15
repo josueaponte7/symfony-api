@@ -8,4 +8,4 @@ App\Form\Model\BookDto:
                     max: 250
                     minMessage: 'The title must be at least {{ limit }} characters long'
                     maxMessage: 'Your title cannot be longer than {{ limit }} characters'
-                    allowEmptyString: true
+                    allowEmptyString: false
