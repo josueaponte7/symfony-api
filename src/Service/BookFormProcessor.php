@@ -3,15 +3,12 @@
 namespace App\Service;
 
 use App\Entity\Book;
-use App\Entity\Category;
 use App\Form\Model\BookDto;
 use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
-use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class BookFormProcessor
 {
@@ -47,7 +44,7 @@ class BookFormProcessor
         if($form->isValid()){
             // Remove categories
             foreach($originalCategories as $originalCategoryDto){
-                if(!in_array($originalCategoryDto, $bookDto->categories, true)){
+                if(!\in_array($originalCategoryDto, $bookDto->categories, true)){
                     $category = $this->categoryManager->find($originalCategoryDto->id);
                     $book->removeCategory($category);
                 }
