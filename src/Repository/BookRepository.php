@@ -13,6 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Book|null findOneBy(array $criteria, array $orderBy = null)
  * @method Book[]    findAll()
  * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<Book>
  */
 class BookRepository extends ServiceEntityRepository
 {
@@ -45,32 +46,4 @@ class BookRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return BookDto[] Returns an array of BookDto objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?BookDto
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

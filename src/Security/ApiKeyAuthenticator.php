@@ -2,7 +2,6 @@
 // src/Security/ApiKeyAuthenticator.php
 namespace App\Security;
 
-use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

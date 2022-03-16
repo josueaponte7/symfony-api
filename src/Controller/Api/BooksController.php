@@ -3,7 +3,6 @@
 namespace App\Controller\Api;
 
 
-use App\Repository\BookRepository;
 use App\Service\BookFormProcessor;
 use App\Service\BookManager;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -45,7 +44,7 @@ class BooksController extends AbstractFOSRestController
     {
         $book = $bookManager->find($id);
         if(!$book){
-            return View::create(BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
+            return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         return $book;
     }
@@ -58,7 +57,7 @@ class BooksController extends AbstractFOSRestController
     {
         $book = $bookManager->find($id);
         if(!$book){
-            return View::create(BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
+            return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         [$book, $error] = ($bookFormProcessor)($book, $request);
 
@@ -75,7 +74,7 @@ class BooksController extends AbstractFOSRestController
     {
         $book = $bookManager->find($id);
         if(!$book){
-            return View::create(BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
+            return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
        $bookManager->delete($book);
 
