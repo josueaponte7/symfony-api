@@ -48,7 +48,7 @@ class BooksController extends AbstractFOSRestController
     public function getSigleBook(string $id, GetBook $getBook)
     {
         $book = ($getBook)($id);
-        if (!$book) {
+        if(!$book) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         return $book;
@@ -61,7 +61,7 @@ class BooksController extends AbstractFOSRestController
     public function editBook(string $id, BookFormProcessor $bookFormProcessor, GetBook $getBook, Request $request): View
     {
         $book = ($getBook)($id);
-        if (!$book) {
+        if(!$book) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         [$book, $error] = ($bookFormProcessor)($request, $id);
@@ -79,7 +79,7 @@ class BooksController extends AbstractFOSRestController
     {
         try {
             ($deleteBook)($id);
-        } catch (Throwable $e) {
+        } catch(Throwable $e) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         return View::create(null, Response::HTTP_NO_CONTENT);

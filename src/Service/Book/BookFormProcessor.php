@@ -7,6 +7,7 @@ use App\Entity\Book\Score;
 use App\Form\Model\BookDto;
 use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
+use App\Model\Exception\Category\CategoryNotFound;
 use App\Repository\BookRepository;
 use App\Service\Category\CreateCategory;
 use App\Service\Category\GetCategory;
@@ -42,6 +43,9 @@ class BookFormProcessor
         $this->getBook = $getBook;
     }
     
+    /**
+     * @throws CategoryNotFound
+     */
     public function __invoke(Request $request, string $bookId = null): array
     {
         

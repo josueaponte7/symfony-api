@@ -10,8 +10,8 @@ use Ramsey\Uuid\UuidInterface;
 class Category
 {
     private ?UuidInterface $id = null;
-    private ?string $name;
-    private $books;
+    private string $name;
+    private Collection $books;
     
     public function __construct(UuidInterface $uuid, string $name)
     {
@@ -49,7 +49,7 @@ class Category
     
     public function addBook(Book $book): self
     {
-        if (!$this->books->contains($book)) {
+        if(!$this->books->contains($book)) {
             $this->books[] = $book;
             $book->addCategory($this);
         }
@@ -59,7 +59,7 @@ class Category
     
     public function removeBook(Book $book): self
     {
-        if ($this->books->removeElement($book)) {
+        if($this->books->removeElement($book)) {
             $book->removeCategory($this);
         }
         

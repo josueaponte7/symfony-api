@@ -7,12 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use function in_array;
 
 
 class Book
 {
     private UuidInterface $id;
-    private ?string $title = null;
+    private string $title;
     private ?string $description = null;
     private Score $score;
     private ?string $image;
@@ -21,7 +22,7 @@ class Book
     public function __construct(UuidInterface $uuid)
     {
         $this->id = $uuid;
-        $this->score = Score::create(null);
+        $this->score = Score::create();
         $this->categories = new ArrayCollection();
     }
     
@@ -80,7 +81,7 @@ class Book
         return $this->categories;
     }
     
-    public function update(string $title, ?string $image, ?string $description, ?Score $score, Category ...$categories)
+    public function update(string $title, ?string $image, ?string $description, ?Score $score, Category ...$categories): void
     {
         $this->title = $title;
         $this->image = $image;
@@ -99,7 +100,7 @@ class Book
         
         // Remove categories
         foreach($originalCategories as $originalCategory) {
-            if(!\in_array($originalCategory, $categories, true)) {
+            if(!in_array($originalCategory, $categories, true)) {
                 $this->removeCategory($originalCategory);
             }
         }

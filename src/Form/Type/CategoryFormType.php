@@ -23,13 +23,13 @@ class CategoryFormType extends AbstractType
          * @param null|UuidInterface $id
          * @return string
          */
-            function (?UuidInterface $id) {
-                if ($id === null) {
+            function(?UuidInterface $id) {
+                if($id === null) {
                     return '';
                 }
                 return $id->toString();
             },
-            function ($id) {
+            function($id) {
                 return $id === null ? null : Uuid::fromString($id);
             }
         ));

@@ -30,7 +30,7 @@ class CategoryController extends AbstractFOSRestController
         $categoryDto = new CategoryDto();
         $form = $this->createForm(CategoryFormType::class, $categoryDto);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if($form->isSubmitted() && $form->isValid()) {
             $category = $categoryManager->create();
             $category->setName($categoryDto->name);
             $categoryManager->save($category);

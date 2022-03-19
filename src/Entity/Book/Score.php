@@ -7,17 +7,17 @@ use Negotiation\Exception\InvalidArgument;
 
 class Score
 {
-    public ?int $value = null;
+    public int $value = 0;
     
-    public function __construct(?int $value = null)
+    public function __construct(int $value = 0)
     {
         $this->assertValueIsValid($value);
         $this->value = $value;
     }
     
-    private function assertValueIsValid(?int $value): void
+    private function assertValueIsValid(int $value = 0): void
     {
-        if($value === null) {
+        if($value === 0) {
             return;
         }
         if($value > 5 || $value < 0) {
@@ -25,7 +25,7 @@ class Score
         }
     }
     
-    public static function create(?int $value = null): self
+    public static function create(int $value = 0): self
     {
         return new self($value);
     }
