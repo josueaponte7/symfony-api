@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Book;
 
 use App\Entity\Book;
 use App\Form\Model\BookDto;
 use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
 use App\Repository\BookRepository;
+use App\Service\Category\CategoryManager;
+use App\Service\Category\GetCategory;
+use App\Service\FileUploader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +22,12 @@ class BookFormProcessor
     private FileUploader $fileUploader;
     private FormFactoryInterface $formFactory;
     private BookRepository $bookRepository;
+    private GetCategory $getCategory;
     
     public function __construct(
         BookRepository $bookRepository,
         CategoryManager $categoryManager,
+        GetCategory $getCategory,
         FileUploader $fileUploader,
         FormFactoryInterface $formFactory
     ) {
@@ -31,6 +36,7 @@ class BookFormProcessor
         $this->categoryManager = $categoryManager;
         $this->fileUploader = $fileUploader;
         $this->formFactory = $formFactory;
+        $this->getCategory = $getCategory;
     }
     
     public function __invoke(Book $book, Request $request): array
@@ -54,7 +60,8 @@ class BookFormProcessor
             // Remove categories
             foreach ($originalCategories as $originalCategoryDto) {
                 if (!in_array($originalCategoryDto, $bookDto->categories, true)) {
-                    $category = $this->categoryManager->find($originalCategoryDto->getId());
+                    $category = ($this->getCategory)($originalCategoryDto->getId());
+                    //$category = $this->categoryManager->find($originalCategoryDto->getId());
                     $book->removeCategory($category);
                 }
             }
@@ -64,7 +71,8 @@ class BookFormProcessor
                 if (!$originalCategories->contains($newCategoryDto)) {
                     $category = null;
                     if ($newCategoryDto->getId() !== null) {
-                        $category = $this->categoryManager->find($newCategoryDto->getId());
+                        $category = ($this->getCategory)($newCategoryDto->getId());
+                        //$category = $this->categoryManager->find($newCategoryDto->getId());
                     }
                     
                     if (!$category) {

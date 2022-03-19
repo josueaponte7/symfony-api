@@ -3,6 +3,7 @@
 namespace App\Service\Book;
 
 use App\Entity\Book;
+use App\Model\Exception\Book\BookNotFound;
 use App\Repository\BookRepository;
 use Ramsey\Uuid\Uuid;
 
@@ -15,8 +16,12 @@ class GetBook
         $this->bookRepository = $bookRepository;
     }
     
-    public function __invoke(string  $id): ?Book
+    public function __invoke(string $id): ?Book
     {
-        return $this->bookRepository->find(Uuid::fromString($id));
+        $book = $this->bookRepository->find(Uuid::fromString($id));
+        if (!$book) {
+            BookNotFound::throwException();
+        }
+        return $book;
     }
 }
