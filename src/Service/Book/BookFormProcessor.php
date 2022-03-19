@@ -7,19 +7,17 @@ use App\Form\Model\BookDto;
 use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
 use App\Repository\BookRepository;
-use App\Service\Category\CategoryManager;
 use App\Service\Category\CreateCategory;
 use App\Service\Category\GetCategory;
 use App\Service\FileUploader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use function in_array;
 
 class BookFormProcessor
 {
     
-    private CategoryManager $categoryManager;
+    
     private FileUploader $fileUploader;
     private FormFactoryInterface $formFactory;
     private BookRepository $bookRepository;
@@ -29,7 +27,6 @@ class BookFormProcessor
     
     public function __construct(
         BookRepository $bookRepository,
-        CategoryManager $categoryManager,
         GetCategory $getCategory,
         CreateCategory $createCategory,
         FileUploader $fileUploader,
@@ -38,7 +35,6 @@ class BookFormProcessor
     ) {
         
         $this->bookRepository = $bookRepository;
-        $this->categoryManager = $categoryManager;
         $this->fileUploader = $fileUploader;
         $this->formFactory = $formFactory;
         $this->getCategory = $getCategory;
@@ -51,8 +47,7 @@ class BookFormProcessor
         
         $book = null;
         $bookDto = null;
-        /** @var CategoryDto[]|ArrayCollection */
-        $originalCategories = new ArrayCollection();
+        
         if ($bookId === null) {
             $book = Book::create();
             $bookDto = BookDto::createEmpty();
@@ -61,9 +56,7 @@ class BookFormProcessor
             $bookDto = BookDto::createFromBook($book);
             $originalCategories = new ArrayCollection();
             foreach ($book->getCategories() as $category) {
-                $categoryDto = CategoryDto::createFromCategory($category);
-                $bookDto->categories[] = $categoryDto;
-                $originalCategories->add($categoryDto);
+                $bookDto->categories[] = CategoryDto::createFromCategory($category);
             }
         }
         
@@ -73,39 +66,31 @@ class BookFormProcessor
         if (!$form->isSubmitted()) {
             return [null, 'Form is not submitted'];
         }
-        if ($form->isValid()) {
-            // Remove categories
-            foreach ($originalCategories as $originalCategoryDto) {
-                if (!in_array($originalCategoryDto, $bookDto->categories, true)) {
-                    $category = ($this->getCategory)($originalCategoryDto->getId());
-                    $book->removeCategory($category);
-                }
+        if (!$form->isValid()) {
+            return [null, $form];
+        }
+        
+        $categories = [];
+        foreach ($bookDto->getCategories() as $newCategoryDto) {
+            $category = null;
+            if ($newCategoryDto->getId() !== null) {
+                $category = ($this->getCategory)($newCategoryDto->getId());
             }
             
-            // Add categories
-            foreach ($bookDto->getCategories() as $newCategoryDto) {
-                if (!$originalCategories->contains($newCategoryDto)) {
-                    $category = null;
-                    if ($newCategoryDto->getId() !== null) {
-                        $category = ($this->getCategory)($newCategoryDto->getId());
-                        //$category = $this->categoryManager->find($newCategoryDto->getId());
-                    }
-                    
-                    if (!$category) {
-                        $category = ($this->createCategory)($newCategoryDto->getName());
-                    }
-                    $book->addCategory($category);
-                }
+            if ($category === null) {
+                $category = ($this->createCategory)($newCategoryDto->getName());
             }
-            $book->setTitle($bookDto->title);
-            if ($bookDto->base64Image) {
-                $filename = $this->fileUploader->uploaderBase64File($bookDto->base64Image);
-                $book->setImage($filename);
-            }
-            //$this->bookRepository->add($book);
-            $this->bookRepository->save($book);
-            return [$book, null];
+            $categories[] = $category;
         }
-        return [null, $form];
+        
+        $filename = null;
+        if ($bookDto->base64Image) {
+            $filename = $this->fileUploader->uploaderBase64File($bookDto->base64Image);
+        }
+        $book->update($bookDto->title, $filename, ...$categories);
+        
+        //$this->bookRepository->add($book);
+        $this->bookRepository->save($book);
+        return [$book, null];
     }
 }

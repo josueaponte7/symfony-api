@@ -60,13 +60,35 @@ class Book
         return $this->categories;
     }
     
-    public function addCategory(Category $category): self
+    public function update(string $title, ?string $image, Category ...$categories)
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories[] = $category;
+        $this->title = $title;
+        $this->image = $image;
+        
+        $this->updateCategories(...$categories);
+    }
+    
+    public function updateCategories(Category ...$categories)
+    {
+        /** @var Category[]|ArrayCollection */
+        $originalCategories = new ArrayCollection();
+        foreach ($this->categories as $category) {
+            $originalCategories->add($category);
         }
         
-        return $this;
+        // Remove categories
+        foreach ($originalCategories as $originalCategory) {
+            if (!in_array($originalCategory, $categories, true)) {
+                $this->removeCategory($originalCategory);
+            }
+        }
+        
+        // Add categories
+        foreach ($categories as $newCategory) {
+            if (!$originalCategories->contains(!$newCategory)) {
+                $this->addCategory($newCategory);
+            }
+        }
     }
     
     public function removeCategory(Category $category): self
@@ -76,10 +98,13 @@ class Book
         return $this;
     }
     
-    public function update(string $title, ?string $image, Category ...$category)
+    public function addCategory(Category $category): self
     {
-        $this->title = $title;
-        $this->image = $image;
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
         
+        return $this;
     }
+    
 }
