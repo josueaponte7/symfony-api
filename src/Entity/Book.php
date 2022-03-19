@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Book\Score;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
@@ -12,12 +13,15 @@ class Book
 {
     private UuidInterface $id;
     private ?string $title = null;
+    private ?string $description = null;
+    private Score $score;
     private ?string $image;
-    private $categories;
+    private Collection $categories;
     
     public function __construct(UuidInterface $uuid)
     {
         $this->id = $uuid;
+        $this->score = Score::create(null);
         $this->categories = new ArrayCollection();
     }
     
@@ -55,16 +59,33 @@ class Book
         return $this;
     }
     
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    
+    public function getScore(): Score
+    {
+        return $this->score;
+    }
+    
+    public function setScore(Score $score): self
+    {
+        $this->score = $score;
+        return $this;
+    }
+    
     public function getCategories(): Collection
     {
         return $this->categories;
     }
     
-    public function update(string $title, ?string $image, Category ...$categories)
+    public function update(string $title, ?string $image, ?string $description, ?Score $score, Category ...$categories)
     {
         $this->title = $title;
         $this->image = $image;
-        
+        $this->description = $description;
+        $this->score = $score;
         $this->updateCategories(...$categories);
     }
     

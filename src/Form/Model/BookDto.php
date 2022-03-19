@@ -10,6 +10,8 @@ class BookDto
 {
     public ?string $title = null;
     public ?string $base64Image = null;
+    public ?string $description = null;
+    public ?int $score = null;
     /** @var CategoryDto[]|null */
     public ?array $categories = [];
     
@@ -46,6 +48,16 @@ class BookDto
     public function getCategories(): ?array
     {
         return $this->categories;
+    }
+    
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    
+    public function getScore(): ?int
+    {
+        return $this->score;
     }
     
     
