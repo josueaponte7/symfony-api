@@ -8,7 +8,6 @@ use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use function in_array;
@@ -38,6 +37,7 @@ class BookFormProcessor
     {
         $bookDto = BookDto::createFromBook($book);
         
+        /** @var CategoryDto[]|ArrayCollection */
         $originalCategories = new ArrayCollection();
         foreach ($book->getCategories() as $category) {
             $categoryDto = CategoryDto::createFromCategory($category);
@@ -54,22 +54,22 @@ class BookFormProcessor
             // Remove categories
             foreach ($originalCategories as $originalCategoryDto) {
                 if (!in_array($originalCategoryDto, $bookDto->categories, true)) {
-                    $category = $this->categoryManager->find(Uuid::fromString($originalCategoryDto->id));
+                    $category = $this->categoryManager->find($originalCategoryDto->getId());
                     $book->removeCategory($category);
                 }
             }
             
             // Add categories
-            foreach ($bookDto->categories as $newCategoryDto) {
+            foreach ($bookDto->getCategories() as $newCategoryDto) {
                 if (!$originalCategories->contains($newCategoryDto)) {
                     $category = null;
-                    if ($newCategoryDto->id !== null) {
-                        $category = $this->categoryManager->find(Uuid::fromString($newCategoryDto->id));
+                    if ($newCategoryDto->getId() !== null) {
+                        $category = $this->categoryManager->find($newCategoryDto->getId());
                     }
                     
                     if (!$category) {
                         $category = $this->categoryManager->create();
-                        $category->setName($newCategoryDto->name);
+                        $category->setName($newCategoryDto->getName());
                         $this->categoryManager->persist($category);
                     }
                     $book->addCategory($category);
