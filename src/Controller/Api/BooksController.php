@@ -13,10 +13,12 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class BooksController extends AbstractFOSRestController
 {
     public const BOOK_NOT_FOUND = 'Book not found';
+    
     /**
      * @Rest\Get(path="/books")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
@@ -25,20 +27,23 @@ class BooksController extends AbstractFOSRestController
     {
         return $bookRepository->findAll();
     }
-
+    
     /**
      * @Rest\Post(path="/books")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      */
-    public function createBook(BookRepository $bookRepository, BookFormProcessor $bookFormProcessor, Request $request): View
-    {
+    public function createBook(
+        BookRepository $bookRepository,
+        BookFormProcessor $bookFormProcessor,
+        Request $request
+    ): View {
         $book = Book::create();
         [$book, $error] = ($bookFormProcessor)($book, $request);
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_GATEWAY;
         $data = $book ?? $error;
         return View::create($data, $statusCode);
     }
-
+    
     /**
      * @Rest\Get(path="/books/{id}")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
@@ -46,12 +51,12 @@ class BooksController extends AbstractFOSRestController
     public function getSigleBook(string $id, GetBook $getBook)
     {
         $book = ($getBook)($id);
-        if(!$book){
+        if (!$book) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         return $book;
     }
-
+    
     /**
      * @Rest\Post(path="/books/{id}")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
@@ -59,16 +64,16 @@ class BooksController extends AbstractFOSRestController
     public function editBook(string $id, BookFormProcessor $bookFormProcessor, GetBook $getBook, Request $request): View
     {
         $book = ($getBook)($id);
-        if(!$book){
+        if (!$book) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         [$book, $error] = ($bookFormProcessor)($book, $request);
-
+        
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_GATEWAY;
         $data = $book ?? $error;
         return View::create($data, $statusCode);
     }
-
+    
     /**
      * @Rest\Delete(path="/books/{id}")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
