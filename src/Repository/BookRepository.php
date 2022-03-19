@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Book|null findOneBy(array $criteria, array $orderBy = null)
  * @method Book[]    findAll()
  * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<Book>
+ * @extends ServiceEntityRepository
  */
 class BookRepository extends ServiceEntityRepository
 {
@@ -20,31 +20,25 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
     
-    public function add(Book $entity, bool $flush = true): void
+    public function add(Book $entity, bool $flush = true): Book
     {
         $this->_em->persist($entity);
-        if ($flush) {
+        if($flush) {
             $this->_em->flush();
         }
+        return $entity;
     }
     
     public function remove(Book $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
-        if ($flush) {
+        if($flush) {
             $this->_em->flush();
         }
     }
     
     
-    public function save(Book $book):Book
-    {
-        $this->_em->persist($book);
-        $this->_em->flush();
-        return $book;
-    }
-    
-    public function reload(Book $book):Book
+    public function reload(Book $book): Book
     {
         $this->_em->refresh($book);
         return $book;
@@ -56,5 +50,5 @@ class BookRepository extends ServiceEntityRepository
         $this->_em->flush();
         
     }
-
+    
 }

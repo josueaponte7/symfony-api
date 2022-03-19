@@ -89,24 +89,24 @@ class Book
         $this->updateCategories(...$categories);
     }
     
-    public function updateCategories(Category ...$categories)
+    public function updateCategories(Category ...$categories): void
     {
         /** @var Category[]|ArrayCollection */
         $originalCategories = new ArrayCollection();
-        foreach ($this->categories as $category) {
+        foreach($this->categories as $category) {
             $originalCategories->add($category);
         }
         
         // Remove categories
-        foreach ($originalCategories as $originalCategory) {
-            if (!in_array($originalCategory, $categories, true)) {
+        foreach($originalCategories as $originalCategory) {
+            if(!\in_array($originalCategory, $categories, true)) {
                 $this->removeCategory($originalCategory);
             }
         }
         
         // Add categories
-        foreach ($categories as $newCategory) {
-            if (!$originalCategories->contains(!$newCategory)) {
+        foreach($categories as $newCategory) {
+            if(!$originalCategories->contains(!$newCategory)) {
                 $this->addCategory($newCategory);
             }
         }
@@ -121,7 +121,7 @@ class Book
     
     public function addCategory(Category $category): self
     {
-        if (!$this->categories->contains($category)) {
+        if(!$this->categories->contains($category)) {
             $this->categories[] = $category;
         }
         

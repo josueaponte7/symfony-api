@@ -15,12 +15,12 @@ class Score
         $this->value = $value;
     }
     
-    private function assertValueIsValid(?int $value)
+    private function assertValueIsValid(?int $value): void
     {
-        if ($value === null) {
-            return null;
+        if($value === null) {
+            return;
         }
-        if ($value > 5 || $value < 0) {
+        if($value > 5 || $value < 0) {
             throw new InvalidArgument('El score tiene que estar entre 0 y 5');
         }
     }

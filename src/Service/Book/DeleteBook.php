@@ -18,8 +18,9 @@ class DeleteBook
     public function __invoke(string $id)
     {
         $book = ($this->getBook)($id);
-        $this->bookRepository->remove($book);
-        //$this->bookRepository->delete($book);
+        if($book !== null) {
+            $this->bookRepository->remove($book);
+        }
     }
     
 }
