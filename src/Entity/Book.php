@@ -2,44 +2,26 @@
 
 namespace App\Entity;
 
-use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
-/**
- * @ORM\Entity(repositoryClass=BookRepository::class)
- */
+
 class Book
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $title;
-
-    /**
-     * @ORM\Column(type="string", length=512, nullable=true)
-     */
-    private $image;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Category::class, inversedBy="books")
-     */
+    private UuidInterface $id;
+    private ?string $title = null;
+    private ?string $image;
     private $categories;
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid)
     {
+        $this->id = $uuid;
         $this->categories = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
@@ -67,10 +49,6 @@ class Book
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, Category>
-     */
     public function getCategories(): Collection
     {
         return $this->categories;

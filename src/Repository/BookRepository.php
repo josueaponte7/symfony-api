@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,11 +18,7 @@ class BookRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Book::class);
     }
-
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
+    
     public function add(Book $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
@@ -32,17 +26,34 @@ class BookRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
-
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
+    
     public function remove(Book $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
         if ($flush) {
             $this->_em->flush();
         }
+    }
+    
+    
+    public function save(Book $book):Book
+    {
+        $this->_em->persist($book);
+        $this->_em->flush();
+        return $book;
+    }
+    
+    public function reload(Book $book):Book
+    {
+        $this->_em->refresh($book);
+        return $book;
+    }
+    
+    public function delete(Book $book): void
+    {
+        $this->_em->remove($book);
+        $this->_em->flush();
+        
     }
 
     // /**
