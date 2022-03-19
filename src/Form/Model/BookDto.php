@@ -25,6 +25,11 @@ class BookDto
         return $dto;
     }
     
+    public static function createEmpty(): self
+    {
+        return new self();
+    }
+    
     public function getTitle(): ?string
     {
         return $this->title;

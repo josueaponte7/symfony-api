@@ -25,6 +25,7 @@ class BookFormProcessor
     private BookRepository $bookRepository;
     private GetCategory $getCategory;
     private CreateCategory $createCategory;
+    private GetBook $getBook;
     
     public function __construct(
         BookRepository $bookRepository,
@@ -32,7 +33,8 @@ class BookFormProcessor
         GetCategory $getCategory,
         CreateCategory $createCategory,
         FileUploader $fileUploader,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
+        GetBook $getBook
     ) {
         
         $this->bookRepository = $bookRepository;
@@ -41,19 +43,30 @@ class BookFormProcessor
         $this->formFactory = $formFactory;
         $this->getCategory = $getCategory;
         $this->createCategory = $createCategory;
+        $this->getBook = $getBook;
     }
     
-    public function __invoke(Book $book, Request $request): array
+    public function __invoke(Request $request, string $bookId = null): array
     {
-        $bookDto = BookDto::createFromBook($book);
         
+        $book = null;
+        $bookDto = null;
         /** @var CategoryDto[]|ArrayCollection */
         $originalCategories = new ArrayCollection();
-        foreach ($book->getCategories() as $category) {
-            $categoryDto = CategoryDto::createFromCategory($category);
-            $bookDto->categories[] = $categoryDto;
-            $originalCategories->add($categoryDto);
+        if ($bookId === null) {
+            $book = Book::create();
+            $bookDto = BookDto::createEmpty();
+        } else {
+            $book = ($this->getBook)($bookId);
+            $bookDto = BookDto::createFromBook($book);
+            $originalCategories = new ArrayCollection();
+            foreach ($book->getCategories() as $category) {
+                $categoryDto = CategoryDto::createFromCategory($category);
+                $bookDto->categories[] = $categoryDto;
+                $originalCategories->add($categoryDto);
+            }
         }
+        
         
         $form = $this->formFactory->create(BookFormType::class, $bookDto);
         $form->handleRequest($request);

@@ -75,4 +75,11 @@ class Book
         
         return $this;
     }
+    
+    public function update(string $title, ?string $image, Category ...$category)
+    {
+        $this->title = $title;
+        $this->image = $image;
+        
+    }
 }
