@@ -29,9 +29,9 @@ class CategoryManager
         return $this->categoryRepository->find($id);
     }
     
-    public function create(): Category
+    public function create($name): Category
     {
-        return new Category (Uuid::uuid4());
+        return new Category (Uuid::uuid4(), $name);
     }
     
     public function persist(Category $category): Category

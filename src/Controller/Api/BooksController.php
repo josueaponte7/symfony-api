@@ -3,7 +3,6 @@
 namespace App\Controller\Api;
 
 
-use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\Book\BookFormProcessor;
 use App\Service\Book\DeleteBook;
@@ -36,7 +35,6 @@ class BooksController extends AbstractFOSRestController
         BookFormProcessor $bookFormProcessor,
         Request $request
     ): View {
-        $book = Book::create();
         [$book, $error] = ($bookFormProcessor)($request);
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_GATEWAY;
         $data = $book ?? $error;
@@ -66,7 +64,7 @@ class BooksController extends AbstractFOSRestController
         if (!$book) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
-        [$book, $error] = ($bookFormProcessor)($request);
+        [$book, $error] = ($bookFormProcessor)($request, $id);
         
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_GATEWAY;
         $data = $book ?? $error;
