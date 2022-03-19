@@ -8,6 +8,7 @@ use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
 use App\Repository\BookRepository;
 use App\Service\Category\CategoryManager;
+use App\Service\Category\CreateCategory;
 use App\Service\Category\GetCategory;
 use App\Service\FileUploader;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,11 +24,13 @@ class BookFormProcessor
     private FormFactoryInterface $formFactory;
     private BookRepository $bookRepository;
     private GetCategory $getCategory;
+    private CreateCategory $createCategory;
     
     public function __construct(
         BookRepository $bookRepository,
         CategoryManager $categoryManager,
         GetCategory $getCategory,
+        CreateCategory $createCategory,
         FileUploader $fileUploader,
         FormFactoryInterface $formFactory
     ) {
@@ -37,6 +40,7 @@ class BookFormProcessor
         $this->fileUploader = $fileUploader;
         $this->formFactory = $formFactory;
         $this->getCategory = $getCategory;
+        $this->createCategory = $createCategory;
     }
     
     public function __invoke(Book $book, Request $request): array
@@ -61,7 +65,6 @@ class BookFormProcessor
             foreach ($originalCategories as $originalCategoryDto) {
                 if (!in_array($originalCategoryDto, $bookDto->categories, true)) {
                     $category = ($this->getCategory)($originalCategoryDto->getId());
-                    //$category = $this->categoryManager->find($originalCategoryDto->getId());
                     $book->removeCategory($category);
                 }
             }
@@ -76,9 +79,7 @@ class BookFormProcessor
                     }
                     
                     if (!$category) {
-                        $category = $this->categoryManager->create();
-                        $category->setName($newCategoryDto->getName());
-                        $this->categoryManager->persist($category);
+                        $category = ($this->createCategory)($newCategoryDto->getName());
                     }
                     $book->addCategory($category);
                 }

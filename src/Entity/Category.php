@@ -13,15 +13,16 @@ class Category
     private ?string $name;
     private $books;
     
-    public function __construct(UuidInterface $uuid)
+    public function __construct(UuidInterface $uuid, string $name)
     {
         $this->id = $uuid;
         $this->books = new ArrayCollection();
+        $this->name = $name;
     }
     
-    public function create(): Category
+    public static function create(string $name): Category
     {
-        return new Category(Uuid::uuid4());
+        return new Category(Uuid::uuid4(), $name);
     }
     
     public function getId(): UuidInterface

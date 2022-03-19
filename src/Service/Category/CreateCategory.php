@@ -18,7 +18,7 @@ class CreateCategory
     public function __invoke(string $name): Category
     {
         $category = Category::create($name);
-        $this->categoryRepository->add($category);
+        $this->categoryRepository->save($category);
         return $category;
     }
 }

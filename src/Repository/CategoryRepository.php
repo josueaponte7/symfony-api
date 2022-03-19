@@ -20,19 +20,20 @@ class CategoryRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Category::class);
     }
-
+    
     /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function add(Category $entity, bool $flush = true): void
+    public function add(Category $entity, bool $flush = true): Category
     {
         $this->_em->persist($entity);
         if ($flush) {
             $this->_em->flush();
         }
+        return $entity;
     }
-
+    
     /**
      * @throws ORMException
      * @throws OptimisticLockException
@@ -43,5 +44,24 @@ class CategoryRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+    
+    public function save(Category $category): Category
+    {
+        $this->getEntityManager()->persist($category);
+        $this->getEntityManager()->flush();
+        return $category;
+    }
+    
+    public function reload(Category $category): Category
+    {
+        $this->getEntityManager()->refresh($category);
+        return $category;
+    }
+    
+    public function delete(Category $category): void
+    {
+        $this->getEntityManager()->remove($category);
+        $this->getEntityManager()->flush();
     }
 }
