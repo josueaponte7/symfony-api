@@ -83,6 +83,9 @@
     "egulias/email-validator": {
         "version": "3.1.2"
     },
+    "ekino/phpstan-banned-code": {
+        "version": "v1.0.0"
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.7"
     },
@@ -222,6 +225,9 @@
     },
     "sonata-project/doctrine-extensions": {
         "version": "1.16.0"
+    },
+    "sonata-project/doctrine-orm-admin-bundle": {
+        "version": "4.2.7"
     },
     "sonata-project/exporter": {
         "version": "2.11.0"

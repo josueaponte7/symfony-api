@@ -9,7 +9,7 @@ use Ramsey\Uuid\UuidInterface;
 
 class Category
 {
-    private ?UuidInterface $id = null;
+    private UuidInterface $id;
     private string $name;
     private Collection $books;
     
@@ -29,6 +29,7 @@ class Category
     {
         return $this->id;
     }
+    
     
     public function getName(): ?string
     {
@@ -64,5 +65,10 @@ class Category
         }
         
         return $this;
+    }
+    
+    public function __toString()
+    {
+        return $this->name ?? 'Categoría';
     }
 }
