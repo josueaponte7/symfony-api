@@ -3,38 +3,128 @@
 namespace App\Entity;
 
 use App\Entity\Book\Score;
+use App\Event\Book\BookCreatedEvent;
+use Cassandra\Exception\DomainException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 use function in_array;
 
 
 class Book
 {
-    private UuidInterface $id;
-    private string $title;
-    private ?string $description = null;
-    private Score $score;
-    private ?string $image;
-    private Collection $categories;
+    private array $domainEvents = [];
     
-    public function __construct(UuidInterface $uuid)
-    {
-        $this->id = $uuid;
-        $this->score = Score::create();
-        $this->categories = new ArrayCollection();
+    public function __construct(
+        private UuidInterface $id,
+        private string $title,
+        private ?string $image = null,
+        private ?string $description = null,
+        private ?Score $score = new Score(),
+        private ?Collection $categories = new ArrayCollection()
+    ) {
     }
     
-    public static function create(): self
+    public static function create(
+        string $title,
+        ?string $image,
+        ?string $description,
+        ?Score $score,
+        array $categories
+    ): self {
+        $book = new self(
+            Uuid::uuid4(),
+            $title,
+            $image,
+            $description,
+            $score,
+            new ArrayCollection($categories)
+        );
+        $book->addDomainEvent(new BookCreatedEvent($book->getId()));
+        return $book;
+    }
+    
+    public function update(string $title, ?string $image, ?string $description, ?Score $score, array $categories): void
     {
-        return new self(Uuid::uuid4());
+        $this->title = $title;
+        $this->image = $image;
+        $this->description = $description;
+        $this->score = $score;
+        $this->updateCategories(...$categories);
+    }
+    
+    public function patch(array $data): self
+    {
+        if(array_key_exists('score', $data)) {
+            $this->score = Score::create($data['score']);
+        }
+        if(array_key_exists('title', $data)) {
+            $title = $data['title'];
+            if($title === null){
+                throw new DomainException('Title cannot be null');
+            }
+            $this->title = $title;
+        }
+        return $this;
+    }
+    
+    public function addDomainEvent(Event $event): void
+    {
+        $this->domainEvents[] = $event;
+    }
+    
+    public function pullDomainEvents(): array
+    {
+        return $this->domainEvents;
     }
     
     public function getId(): UuidInterface
     {
         return $this->id;
     }
+    
+    
+    public function updateCategories(Category ...$categories): void
+    {
+        /** @var Category[]|ArrayCollection */
+        $originalCategories = new ArrayCollection();
+        foreach($this->categories as $category) {
+            $originalCategories->add($category);
+        }
+        
+        // Remove categories
+        foreach($originalCategories as $originalCategory) {
+            if(!in_array($originalCategory, $categories, true)) {
+                $this->removeCategory($originalCategory);
+            }
+        }
+        
+        // Add categories
+        foreach($categories as $newCategory) {
+            if(!$originalCategories->contains(!$newCategory)) {
+                $this->addCategory($newCategory);
+            }
+        }
+    }
+    
+    public function removeCategory(Category $category): self
+    {
+        $this->categories->removeElement($category);
+        
+        return $this;
+    }
+    
+    public function addCategory(Category $category): self
+    {
+        if(!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+        
+        return $this;
+    }
+    
     
     public function getTitle(): ?string
     {
@@ -81,56 +171,9 @@ class Book
         return $this->categories;
     }
     
-    public function update(string $title, ?string $image, ?string $description, ?Score $score, Category ...$categories): void
-    {
-        $this->title = $title;
-        $this->image = $image;
-        $this->description = $description;
-        $this->score = $score;
-        $this->updateCategories(...$categories);
-    }
-    
-    public function updateCategories(Category ...$categories): void
-    {
-        /** @var Category[]|ArrayCollection */
-        $originalCategories = new ArrayCollection();
-        foreach($this->categories as $category) {
-            $originalCategories->add($category);
-        }
-        
-        // Remove categories
-        foreach($originalCategories as $originalCategory) {
-            if(!in_array($originalCategory, $categories, true)) {
-                $this->removeCategory($originalCategory);
-            }
-        }
-        
-        // Add categories
-        foreach($categories as $newCategory) {
-            if(!$originalCategories->contains(!$newCategory)) {
-                $this->addCategory($newCategory);
-            }
-        }
-    }
-    
-    public function removeCategory(Category $category): self
-    {
-        $this->categories->removeElement($category);
-        
-        return $this;
-    }
-    
-    public function addCategory(Category $category): self
-    {
-        if(!$this->categories->contains($category)) {
-            $this->categories[] = $category;
-        }
-        
-        return $this;
-    }
-    
     public function __toString()
     {
         return $this->title ?? 'Libro';
     }
+    
 }

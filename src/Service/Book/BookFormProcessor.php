@@ -7,13 +7,16 @@ use App\Entity\Book\Score;
 use App\Form\Model\BookDto;
 use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
+use App\Model\Exception\Book\BookNotFound;
 use App\Model\Exception\Category\CategoryNotFound;
 use App\Repository\BookRepository;
 use App\Service\Category\CreateCategory;
 use App\Service\Category\GetCategory;
 use App\Service\FileUploader;
+use JsonException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookFormProcessor
 {
@@ -25,6 +28,7 @@ class BookFormProcessor
     private GetCategory $getCategory;
     private CreateCategory $createCategory;
     private GetBook $getBook;
+    private EventDispatcherInterface $eventDispatcherInterface;
     
     public function __construct(
         BookRepository $bookRepository,
@@ -32,7 +36,8 @@ class BookFormProcessor
         CreateCategory $createCategory,
         FileUploader $fileUploader,
         FormFactoryInterface $formFactory,
-        GetBook $getBook
+        GetBook $getBook,
+        EventDispatcherInterface $eventDispatcherInterface
     ) {
         
         $this->bookRepository = $bookRepository;
@@ -41,17 +46,19 @@ class BookFormProcessor
         $this->getCategory = $getCategory;
         $this->createCategory = $createCategory;
         $this->getBook = $getBook;
+        $this->eventDispatcherInterface = $eventDispatcherInterface;
     }
     
     /**
      * @throws CategoryNotFound
+     * @throws BookNotFound
+     * @throws JsonException
      */
     public function __invoke(Request $request, string $bookId = null): array
     {
         
-        
+        $book = null;
         if($bookId === null) {
-            $book = Book::create();
             $bookDto = BookDto::createEmpty();
         } else {
             $book = ($this->getBook)($bookId);
@@ -61,9 +68,9 @@ class BookFormProcessor
             }
         }
         
-        
+        $content = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $form = $this->formFactory->create(BookFormType::class, $bookDto);
-        $form->handleRequest($request);
+        $form->submit($content);
         if(!$form->isSubmitted()) {
             return [null, 'Form is not submitted'];
         }
@@ -83,14 +90,28 @@ class BookFormProcessor
             }
             $categories[] = $category;
         }
-        
+
         $filename = null;
         if($bookDto->base64Image) {
             $filename = $this->fileUploader->uploaderBase64File($bookDto->getBase64Image());
         }
-        $book->update($bookDto->getTitle(), $filename, $bookDto->getDescription(), Score::create($bookDto->getScore()), ...$categories);
+        if($book === null){
+
+            $book = Book::create($bookDto->getTitle(), $filename, $bookDto->getDescription(), Score::create($bookDto->getScore()), $categories);
+        } else {
+            $book->update(
+                $bookDto->getTitle(),
+                $filename ?? $book->getImage(),
+                $bookDto->description,
+                Score::create($bookDto->score),
+                $categories
+            );
+        }
         
         $this->bookRepository->add($book);
+        foreach($book->pullDomainEvents() as $event) {
+            $this->eventDispatcherInterface->dispatch($event);
+        }
         return [$book, null];
     }
 }

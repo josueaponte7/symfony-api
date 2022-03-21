@@ -3,13 +3,16 @@
 namespace App\Controller\Api;
 
 
+use App\Model\Exception\Book\BookNotFound;
 use App\Repository\BookRepository;
 use App\Service\Book\BookFormProcessor;
 use App\Service\Book\DeleteBook;
 use App\Service\Book\GetBook;
+use App\Service\Book\PatchBook;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -55,7 +58,7 @@ class BooksController extends AbstractFOSRestController
     }
     
     /**
-     * @Rest\Post(path="/books/{id}")
+     * @Rest\Put(path="/books/{id}")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      */
     public function editBook(string $id, BookFormProcessor $bookFormProcessor, GetBook $getBook, Request $request): View
@@ -72,6 +75,21 @@ class BooksController extends AbstractFOSRestController
     }
     
     /**
+     * @Rest\Patch(path="/books/{id}")
+     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
+     * @throws BookNotFound
+     * @throws JsonException
+     */
+    public function editColumnBook(string $id, PatchBook $patchBook, GetBook $getBook, Request $request): View
+    {
+        $book = ($getBook)($id);
+        $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $book->patch($data);
+        ($patchBook)($book);
+        return View::create($book, Response::HTTP_CREATED);
+    
+    }
+        /**
      * @Rest\Delete(path="/books/{id}")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      */
