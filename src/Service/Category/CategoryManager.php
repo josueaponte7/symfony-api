@@ -29,7 +29,7 @@ class CategoryManager
         return $this->categoryRepository->find($id);
     }
     
-    public function create($name): Category
+    public function create(string $name): Category
     {
         return new Category (Uuid::uuid4(), $name);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use Exception;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -19,7 +20,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
      * this method.
      *
      * @throws UserNotFoundException if the user is not found
-     * @throws \Exception
+     * @throws Exception
      */
     public function loadUserByIdentifier($identifier): UserInterface
     {
@@ -27,7 +28,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         // The $identifier argument may not actually be a username:
         // it is whatever value is being returned by the getUserIdentifier()
         // method in your User class.
-        throw new \Exception('TODO: fill in loadUserByIdentifier() inside '.__FILE__);
+        throw new Exception('TODO: fill in loadUserByIdentifier() inside '.__FILE__);
     }
 
     /**
@@ -57,7 +58,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 
         // Return a User object after making sure its data is "fresh".
         // Or throw a UsernameNotFoundException if the user no longer exists.
-        throw new \Exception('TODO: fill in refreshUser() inside '.__FILE__);
+        throw new Exception('TODO: fill in refreshUser() inside '.__FILE__);
     }
 
     /**

@@ -4,12 +4,13 @@ namespace App\Entity;
 
 use App\Entity\Book\Score;
 use App\Event\Book\BookCreatedEvent;
-use Cassandra\Exception\DomainException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use DomainException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Contracts\EventDispatcher\Event;
+use function array_key_exists;
 use function in_array;
 
 
@@ -55,37 +56,6 @@ class Book
         $this->updateCategories(...$categories);
     }
     
-    public function patch(array $data): self
-    {
-        if(array_key_exists('score', $data)) {
-            $this->score = Score::create($data['score']);
-        }
-        if(array_key_exists('title', $data)) {
-            $title = $data['title'];
-            if($title === null){
-                throw new DomainException('Title cannot be null');
-            }
-            $this->title = $title;
-        }
-        return $this;
-    }
-    
-    public function addDomainEvent(Event $event): void
-    {
-        $this->domainEvents[] = $event;
-    }
-    
-    public function pullDomainEvents(): array
-    {
-        return $this->domainEvents;
-    }
-    
-    public function getId(): UuidInterface
-    {
-        return $this->id;
-    }
-    
-    
     public function updateCategories(Category ...$categories): void
     {
         /** @var Category[]|ArrayCollection */
@@ -107,6 +77,36 @@ class Book
                 $this->addCategory($newCategory);
             }
         }
+    }
+    
+    public function patch(array $data): self
+    {
+        if(array_key_exists('score', $data)) {
+            $this->score = Score::create($data['score']);
+        }
+        if(array_key_exists('title', $data)) {
+            $title = $data['title'];
+            if($title === null) {
+                throw new DomainException('Title cannot be null');
+            }
+            $this->title = $title;
+        }
+        return $this;
+    }
+    
+    public function addDomainEvent(Event $event): void
+    {
+        $this->domainEvents[] = $event;
+    }
+    
+    public function pullDomainEvents(): array
+    {
+        return $this->domainEvents;
+    }
+    
+    public function getId(): UuidInterface
+    {
+        return $this->id;
     }
     
     public function removeCategory(Category $category): self
