@@ -8,13 +8,19 @@ use App\Form\Type\CategoryFormType;
 use App\Service\Category\CategoryManager;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 
+
+/**
+ * @OA\Tag(name="Books")
+ */
 class CategoryController extends AbstractFOSRestController
 {
     /**
      * @Rest\Get(path="/categories")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
+     *
      */
     public function list(CategoryManager $categoryManager): array
     {
