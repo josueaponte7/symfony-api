@@ -10,8 +10,6 @@ use DomainException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Contracts\EventDispatcher\Event;
-use function array_key_exists;
-use function in_array;
 
 
 class Book
@@ -66,7 +64,7 @@ class Book
         
         // Remove categories
         foreach($originalCategories as $originalCategory) {
-            if(!in_array($originalCategory, $categories, true)) {
+            if(!\in_array($originalCategory, $categories, true)) {
                 $this->removeCategory($originalCategory);
             }
         }
@@ -81,10 +79,10 @@ class Book
     
     public function patch(array $data): self
     {
-        if(array_key_exists('score', $data)) {
+        if(\array_key_exists('score', $data)) {
             $this->score = Score::create($data['score']);
         }
-        if(array_key_exists('title', $data)) {
+        if(\array_key_exists('title', $data)) {
             $title = $data['title'];
             if($title === null) {
                 throw new DomainException('Title cannot be null');

@@ -4,7 +4,6 @@ namespace App\Controller\Api;
 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\Security;
-use Nelmio\ApiDocBundle\Annotation\SecurityScheme;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
