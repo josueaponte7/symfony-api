@@ -40,6 +40,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
      */
     public function authenticate(Request $request): Passport
     {
+        
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         if(null === $apiToken) {
             // The token header was empty, authentication fails with HTTP Status
@@ -49,7 +50,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
         if($apiToken !== $this->appApiToken) {
             throw new CustomUserMessageAuthenticationException('');
         }
-        return new SelfValidatingPassport(new UserBadge('josue'));
+        return new SelfValidatingPassport(new UserBadge('josueaponte'));
     }
     
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

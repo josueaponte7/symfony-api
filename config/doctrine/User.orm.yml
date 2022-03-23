@@ -1,31 +1,32 @@
 App\Entity\User:
-    type: entity
-    table: user
-    repositoryClass: App\Repository\UserRepository
+  type: entity
+  table: user
+  repositoryClass: App\Repository\UserRepository
+  id:
     id:
-        id:
-            type: integer
-            scale: null
-            length: null
-            unique: false
-            nullable: false
-            precision: null
-            id: true
-            generator:
-                strategy: IDENTITY
-    fields:
-        username:
-            type: string
-            scale: null
-            length: 180
-            unique: true
-            nullable: false
-            precision: null
-        roles:
-            type: json
-            scale: null
-            length: null
-            unique: false
-            nullable: false
-            precision: null
-    lifecycleCallbacks: {  }
+      type: uuid
+  fields:
+    username:
+      type: string
+      scale: null
+      length: 180
+      unique: true
+      nullable: false
+      precision: null
+    
+    password:
+      type: string
+      scale: null
+      length: 512
+      unique: false
+      nullable: false
+      precision: null
+    
+    roles:
+      type: json
+      scale: null
+      length: null
+      unique: false
+      nullable: false
+      precision: null
+  lifecycleCallbacks: { }

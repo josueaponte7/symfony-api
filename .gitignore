@@ -21,3 +21,7 @@ yarn-error.log
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 /public/storage/default/
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
