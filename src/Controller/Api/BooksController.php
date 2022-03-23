@@ -10,7 +10,9 @@ use App\Service\Book\DeleteBook;
 use App\Service\Book\GetBook;
 use App\Service\Book\PatchBook;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations\{Get, Patch, Post, Put};
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\View as ViewAttribute;
 use FOS\RestBundle\View\View;
 use JsonException;
 use OpenApi\Annotations as OA;
@@ -25,12 +27,12 @@ class BooksController extends AbstractFOSRestController
 {
     public const BOOK_NOT_FOUND = 'Book not found';
     
+    #[Get(path: "/books")]
+    #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
      * List all books.
      *
      * This call show all books data base
-     * @Rest\Get(path="/books")
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      *
      * @OA\Response(
      *     response=200,
@@ -55,12 +57,12 @@ class BooksController extends AbstractFOSRestController
         return $bookRepository->findAll();
     }
     
+    #[Post(path: "/books")]
+    #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
      * Add one book to data base.
      *
      * Add one boook to data base
-     * @Rest\Post(path="/books")
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      * @OA\Response(
      *     response=200,
      *     description="ok",
@@ -89,12 +91,12 @@ class BooksController extends AbstractFOSRestController
         return View::create($data, $statusCode);
     }
     
+    #[Get(path: "/books/{id}")]
+    #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
      * Get single book
      *
      * This Get single book
-     * @Rest\Get(path="/books/{id}")
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      *
      */
     
@@ -107,12 +109,12 @@ class BooksController extends AbstractFOSRestController
         return $book;
     }
     
+    #[Put(path: "/books/{id}")]
+    #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
      * Update single book
      *
      * This update book
-     * @Rest\Put(path="/books/{id}")
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      * @throws BookNotFound
      *
      */
@@ -146,13 +148,13 @@ class BooksController extends AbstractFOSRestController
         return View::create($book, Response::HTTP_CREATED);
     }
     
+    #[Patch(path: "/books/{id}")]
+    #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
      *
      * Delete book
      *
      * This delete book
-     * @Rest\Delete(path="/books/{id}")
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      *
      */
     public function deleteBook(string $id, DeleteBook $deleteBook): View

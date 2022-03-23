@@ -22,31 +22,16 @@ class BookFormProcessor
 {
     
     
-    private FileUploader $fileUploader;
-    private FormFactoryInterface $formFactory;
-    private BookRepository $bookRepository;
-    private GetCategory $getCategory;
-    private CreateCategory $createCategory;
-    private GetBook $getBook;
-    private EventDispatcherInterface $eventDispatcherInterface;
-    
     public function __construct(
-        BookRepository $bookRepository,
-        GetCategory $getCategory,
-        CreateCategory $createCategory,
-        FileUploader $fileUploader,
-        FormFactoryInterface $formFactory,
-        GetBook $getBook,
-        EventDispatcherInterface $eventDispatcherInterface
+        private FileUploader $fileUploader,
+        private FormFactoryInterface $formFactory,
+        private BookRepository $bookRepository,
+        private GetCategory $getCategory,
+        private CreateCategory $createCategory,
+        private GetBook $getBook,
+        private EventDispatcherInterface $eventDispatcherInterface,
     ) {
-        
-        $this->bookRepository = $bookRepository;
-        $this->fileUploader = $fileUploader;
-        $this->formFactory = $formFactory;
-        $this->getCategory = $getCategory;
-        $this->createCategory = $createCategory;
-        $this->getBook = $getBook;
-        $this->eventDispatcherInterface = $eventDispatcherInterface;
+    
     }
     
     /**
@@ -90,13 +75,13 @@ class BookFormProcessor
             }
             $categories[] = $category;
         }
-
+        
         $filename = null;
         if($bookDto->base64Image) {
             $filename = $this->fileUploader->uploaderBase64File($bookDto->getBase64Image());
         }
-        if($book === null){
-
+        if($book === null) {
+            
             $book = Book::create($bookDto->getTitle(), $filename, $bookDto->getDescription(), Score::create($bookDto->getScore()), $categories);
         } else {
             $book->update(

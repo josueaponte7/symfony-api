@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
-use App\Entity\Category;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -14,10 +13,10 @@ use Sonata\AdminBundle\Show\ShowMapper;
 final class CategoryAdmin extends AbstractAdmin
 {
     
-    public function getNewInstance(): object
+    /*public function getNewInstance(): object
     {
         return Category::create('');
-    }
+    }*/
     
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
