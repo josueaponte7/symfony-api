@@ -13,6 +13,7 @@
     "doctrine/orm": "^2.11",
     "friendsofsymfony/rest-bundle": "^3.3",
     "gesdinet/jwt-refresh-token-bundle": "^1.0",
+    "league/csv": "^9.8",
     "league/flysystem-bundle": "^2.2",
     "lexik/jwt-authentication-bundle": "^2.14",
     "nelmio/api-doc-bundle": "^4.8",
