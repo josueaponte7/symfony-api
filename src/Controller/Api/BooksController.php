@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api;
 
-
 use App\Model\Book\BookRepositoryCriteria;
 use App\Model\Exception\Book\BookNotFound;
 use App\Repository\BookRepository;
@@ -11,7 +10,10 @@ use App\Service\Book\DeleteBook;
 use App\Service\Book\GetBook;
 use App\Service\Book\PatchBook;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\{Delete, Get, Post, Put};
+use FOS\RestBundle\Controller\Annotations\Delete;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View as ViewAttribute;
 use FOS\RestBundle\View\View;
@@ -27,7 +29,7 @@ use Throwable;
 class BooksController extends AbstractFOSRestController
 {
     public const BOOK_NOT_FOUND = 'Book not found';
-    
+
     #[Get(path: "/books")]
     #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
@@ -52,7 +54,7 @@ class BooksController extends AbstractFOSRestController
      *      }
      * )
      */
-    
+
     public function list(BookRepository $bookRepository, Request $request): array
     {
         $categoryId = $request->query->get('categoryId');
@@ -61,10 +63,11 @@ class BooksController extends AbstractFOSRestController
         $criteria = new BookRepositoryCriteria(
             $categoryId,
             $itemsPerPage !== null ? (int)$itemsPerPage : 10,
-            $page !== null ? (int)$page : 1,);
+            $page !== null ? (int)$page : 1,
+        );
         return $bookRepository->findByCriteria($criteria);
     }
-    
+
     #[Post(path: "/books")]
     #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
@@ -88,7 +91,7 @@ class BooksController extends AbstractFOSRestController
      *      }
      * )
      */
-    
+
     public function createBook(
         BookFormProcessor $bookFormProcessor,
         Request $request
@@ -98,7 +101,7 @@ class BooksController extends AbstractFOSRestController
         $data = $book ?? $error;
         return View::create($data, $statusCode);
     }
-    
+
     #[Get(path: "/books/{id}")]
     #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
@@ -107,16 +110,16 @@ class BooksController extends AbstractFOSRestController
      * This Get single book
      *
      */
-    
+
     public function getSigleBook(string $id, GetBook $getBook)
     {
         $book = ($getBook)($id);
-        if(!$book) {
+        if (!$book) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         return $book;
     }
-    
+
     #[Put(path: "/books/{id}")]
     #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
@@ -129,16 +132,16 @@ class BooksController extends AbstractFOSRestController
     public function editBook(string $id, BookFormProcessor $bookFormProcessor, GetBook $getBook, Request $request): View
     {
         $book = ($getBook)($id);
-        if(!$book) {
+        if (!$book) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         [$book, $error] = ($bookFormProcessor)($request, $id);
-        
+
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_GATEWAY;
         $data = $book ?? $error;
         return View::create($data, $statusCode);
     }
-    
+
     /**
      *
      * Update one field into book
@@ -155,7 +158,7 @@ class BooksController extends AbstractFOSRestController
         $book = ($patchBook)($id, $request);
         return View::create($book, Response::HTTP_CREATED);
     }
-    
+
     #[Delete(path: "/books/{id}")]
     #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
@@ -169,7 +172,7 @@ class BooksController extends AbstractFOSRestController
     {
         try {
             ($deleteBook)($id);
-        } catch(Throwable) {
+        } catch (Throwable) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         return View::create(null, Response::HTTP_NO_CONTENT);

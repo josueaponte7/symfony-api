@@ -26,7 +26,7 @@ class BookFormType extends AbstractType
                 'entry_type' => CategoryFormType::class,
             ]);
     }
-    
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -34,12 +34,12 @@ class BookFormType extends AbstractType
             'csrf_protection' => false,
         ]);
     }
-    
+
     public function getBlockPrefix(): string
     {
         return '';
     }
-    
+
     public function getName(): string
     {
         return '';

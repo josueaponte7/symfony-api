@@ -14,13 +14,10 @@ class BookCreatedEvent extends Event
     {
         $this->bookId = $bookId;
     }
-    
+
 
     public function getBookId(): UuidInterface
     {
         return $this->bookId;
     }
-    
-    
-    
 }

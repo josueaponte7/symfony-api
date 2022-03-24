@@ -8,12 +8,12 @@ use League\Flysystem\FilesystemOperator;
 class FileUploader
 {
     private FilesystemOperator $defaultStorage;
-    
+
     public function __construct(FilesystemOperator $defaultStorage)
     {
         $this->defaultStorage = $defaultStorage;
     }
-    
+
     public function uploaderBase64File(string $base64File): string
     {
         $extension = explode("/", mime_content_type($base64File))[1];
@@ -21,7 +21,7 @@ class FileUploader
         $filename = sprintf('%s.%s', uniqid('book_', true), $extension);
         try {
             $this->defaultStorage->write($filename, base64_decode($data[1]));
-        } catch(FilesystemException $e) {
+        } catch (FilesystemException $e) {
         }
         return $filename;
     }

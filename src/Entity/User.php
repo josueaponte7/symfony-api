@@ -13,12 +13,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    
     private UuidInterface $id;
     private string $username;
     private array $roles = [];
     private string $password;
-    
+
     /**
      * @param UuidInterface $id
      * @param string $username
@@ -28,46 +27,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->id = $id;
         $this->username = $username;
     }
-    
-    
+
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function getUsername(): string
     {
         return (string)$this->username;
     }
-    
+
     public function setUsername(string $username): self
     {
         $this->username = $username;
-        
+
         return $this;
     }
-    
+
     public function getUserIdentifier(): string
     {
         return (string)$this->username;
     }
-    
+
     public function getRoles(): array
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-        
+
         return array_unique($roles);
     }
-    
+
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-        
+
         return $this;
     }
-    
+
     /**
      * @see PasswordAuthenticatedUserInterface
      */
@@ -75,14 +74,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }
-    
+
     public function setPassword(string $password): self
     {
         $this->password = $password;
-        
+
         return $this;
     }
-    
+
     /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
@@ -93,7 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return null;
     }
-    
+
     /**
      * @see UserInterface
      */

@@ -13,14 +13,13 @@ class PatchBook
     private BookRepository $bookRepository;
     private GetBook $getBook;
 
-    
+
     public function __construct(BookRepository $bookRepository, GetBook $getBook)
     {
         $this->bookRepository = $bookRepository;
         $this->getBook = $getBook;
-
     }
-    
+
     /**
      * @throws BookNotFound
      * @throws JsonException

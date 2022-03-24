@@ -12,14 +12,14 @@ class BookCreatedEventSubscriber implements EventSubscriberInterface
     public function __construct(private GetBook $getBook, private LoggerInterface $logger)
     {
     }
-    
+
     public static function getSubscribedEvents()
     {
         return [
             BookCreatedEvent::class => ['onBookCreated']
         ];
     }
-    
+
     public function onBookCreated(BookCreatedEvent $event)
     {
         $book = ($this->getBook)($event->getBookId()->toString());

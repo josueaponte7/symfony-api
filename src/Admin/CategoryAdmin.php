@@ -14,24 +14,23 @@ use Sonata\AdminBundle\Show\ShowMapper;
 
 final class CategoryAdmin extends AbstractAdmin
 {
-    
     public function createNewInstance(): object
     {
         return Category::create('');
     }
-    
+
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
             ->add('clone', $this->getRouterIdParameter() . '/clone');
     }
-    
+
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
         $filter
             ->add('name');
     }
-    
+
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -48,14 +47,14 @@ final class CategoryAdmin extends AbstractAdmin
                 ],
             ]);
     }
-    
+
     protected function configureFormFields(FormMapper $form): void
     {
         $form
             ->add('id', null, ['disabled' => true])
             ->add('name');
     }
-    
+
     protected function configureShowFields(ShowMapper $show): void
     {
         $show

@@ -10,14 +10,14 @@ class ExportInCsv
     private BookRepository $bookRepository;
     private WriteCsvInterface $writeCsv;
     private string $projectFolder;
-    
+
     public function __construct(BookRepository $bookRepository, WriteCsvInterface $writeCsv, string $projectFolder)
     {
         $this->bookRepository = $bookRepository;
         $this->writeCsv = $writeCsv;
         $this->projectFolder = $projectFolder;
     }
-    
+
     public function __invoke(): void
     {
         $books = $this->bookRepository->findAll();
@@ -26,7 +26,7 @@ class ExportInCsv
             'title',
         ];
         $contents = [];
-        foreach($books as $book) {
+        foreach ($books as $book) {
             $contents[] = [
                 $book->getId()->toString(),
                 $book->getTitle(),
@@ -34,5 +34,4 @@ class ExportInCsv
         }
         $this->writeCsv->write($contents, $this->projectFolder . '/var/books.csv', $headers);
     }
-    
 }

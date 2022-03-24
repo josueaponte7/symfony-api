@@ -2,7 +2,6 @@
 
 namespace App\Service\Isbn;
 
-
 use App\Model\Dto\Isbn\GetBookByIsbnResponse;
 use Exception;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -11,13 +10,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GetBookByIsbn
 {
     private HttpClientInterface $httpClient;
-    
-    
+
+
     public function __construct(HttpClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
     }
-    
+
     /**
      * @throws TransportExceptionInterface
      */
@@ -25,9 +24,9 @@ class GetBookByIsbn
     {
         // OL7353617M
         $response = $this->httpClient->request('GET', sprintf('https://openlibrary.org/isbn/%s.json', $isbn), []);
-        
+
         $statusCode = $response->getStatusCode();
-        if($statusCode !== 200) {
+        if ($statusCode !== 200) {
             throw new Exception('Error recuperando el libro');
         }
         $content = $response->getContent();

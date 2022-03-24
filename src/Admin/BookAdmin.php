@@ -14,12 +14,11 @@ use Sonata\AdminBundle\Show\ShowMapper;
 
 final class BookAdmin extends AbstractAdmin
 {
-    
     public function createNewInstance(): object
     {
         return Book::create('', null, '', new Score(), []);
     }
-    
+
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
         $filter
@@ -28,7 +27,7 @@ final class BookAdmin extends AbstractAdmin
             ->add('description')
             ->add('score.value');
     }
-    
+
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -45,7 +44,7 @@ final class BookAdmin extends AbstractAdmin
                 ],
             ]);
     }
-    
+
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -56,7 +55,7 @@ final class BookAdmin extends AbstractAdmin
             ->add('description')
             ->add('score.value');
     }
-    
+
     protected function configureShowFields(ShowMapper $show): void
     {
         $show

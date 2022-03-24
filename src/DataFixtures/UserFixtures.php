@@ -11,22 +11,19 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserFixtures extends Fixture
 {
     private UserPasswordHasherInterface $hasher;
-    
+
     public function __construct(UserPasswordHasherInterface $hasher)
     {
         $this->hasher = $hasher;
     }
-    
+
     public function load(ObjectManager $manager): void
     {
-        
         $user = new User(Uuid::uuid4(), 'josueaponte');
         $password = $this->hasher->hashPassword($user, 'josue');
         $user->setPassword($password);
-        
+
         $manager->persist($user);
         $manager->flush();
     }
 }
-
-

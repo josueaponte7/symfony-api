@@ -31,6 +31,4 @@ class BookNormalizer implements ContextAwareNormalizerInterface
     {
         return $data instanceof Book;
     }
-
-
 }

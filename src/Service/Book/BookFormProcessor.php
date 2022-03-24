@@ -20,8 +20,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookFormProcessor
 {
-    
-    
     public function __construct(
         private FileUploader $fileUploader,
         private FormFactoryInterface $formFactory,
@@ -31,9 +29,8 @@ class BookFormProcessor
         private GetBook $getBook,
         private EventDispatcherInterface $eventDispatcherInterface,
     ) {
-    
     }
-    
+
     /**
      * @throws CategoryNotFound
      * @throws BookNotFound
@@ -41,47 +38,45 @@ class BookFormProcessor
      */
     public function __invoke(Request $request, string $bookId = null): array
     {
-        
         $book = null;
-        if($bookId === null) {
+        if ($bookId === null) {
             $bookDto = BookDto::createEmpty();
         } else {
             $book = ($this->getBook)($bookId);
             $bookDto = BookDto::createFromBook($book);
-            foreach($book->getCategories() as $category) {
+            foreach ($book->getCategories() as $category) {
                 $bookDto->categories[] = CategoryDto::createFromCategory($category);
             }
         }
-        
+
         $content = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $form = $this->formFactory->create(BookFormType::class, $bookDto);
         $form->submit($content);
-        if(!$form->isSubmitted()) {
+        if (!$form->isSubmitted()) {
             return [null, 'Form is not submitted'];
         }
-        if(!$form->isValid()) {
+        if (!$form->isValid()) {
             return [null, $form];
         }
-        
+
         $categories = [];
-        foreach($bookDto->getCategories() as $newCategoryDto) {
+        foreach ($bookDto->getCategories() as $newCategoryDto) {
             $category = null;
-            if($newCategoryDto->getId() !== null) {
+            if ($newCategoryDto->getId() !== null) {
                 $category = ($this->getCategory)($newCategoryDto->getId());
             }
-            
-            if($category === null) {
+
+            if ($category === null) {
                 $category = ($this->createCategory)($newCategoryDto->getName());
             }
             $categories[] = $category;
         }
-        
+
         $filename = null;
-        if($bookDto->base64Image) {
+        if ($bookDto->base64Image) {
             $filename = $this->fileUploader->uploaderBase64File($bookDto->getBase64Image());
         }
-        if($book === null) {
-            
+        if ($book === null) {
             $book = Book::create($bookDto->getTitle(), $filename, $bookDto->getDescription(), Score::create($bookDto->getScore()), $categories);
         } else {
             $book->update(
@@ -92,9 +87,9 @@ class BookFormProcessor
                 $categories
             );
         }
-        
+
         $this->bookRepository->add($book);
-        foreach($book->pullDomainEvents() as $event) {
+        foreach ($book->pullDomainEvents() as $event) {
             $this->eventDispatcherInterface->dispatch($event);
         }
         return [$book, null];

@@ -19,11 +19,10 @@ class IsbnController extends AbstractFOSRestController
     public function getBookIsbn(GetBookByIsbn $getBookIsbn, Request $request): View
     {
         $isbn = $request->get('isbn', null);
-        if($isbn === null) {
+        if ($isbn === null) {
             return View::create('Book not found', Response::HTTP_BAD_REQUEST);
         }
         $json = ($getBookIsbn)($isbn);
         return View::create($json);
     }
-    
 }

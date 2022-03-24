@@ -23,18 +23,18 @@ class CategoryFormType extends AbstractType
          * @param null|UuidInterface $id
          * @return string
          */
-            function(?UuidInterface $id) {
-                if($id === null) {
+            function (?UuidInterface $id) {
+                if ($id === null) {
                     return '';
                 }
                 return $id->toString();
             },
-            function($id) {
+            function ($id) {
                 return $id === null ? null : Uuid::fromString($id);
             }
         ));
     }
-    
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -42,12 +42,12 @@ class CategoryFormType extends AbstractType
             'csrf_protection' => false,
         ]);
     }
-    
+
     public function getBlockPrefix(): string
     {
         return '';
     }
-    
+
     public function getName(): string
     {
         return '';

@@ -14,34 +14,34 @@ class BookDto
     public ?int $score = null;
     /** @var CategoryDto[]|null */
     public ?array $categories = [];
-    
+
     public function __construct()
     {
         $this->categories = [];
     }
-    
+
     public static function createFromBook(Book $book): self
     {
         $dto = new self();
         $dto->title = $book->getTitle();
         return $dto;
     }
-    
+
     public static function createEmpty(): self
     {
         return new self();
     }
-    
+
     public function getTitle(): ?string
     {
         return $this->title;
     }
-    
+
     public function getBase64Image(): ?string
     {
         return $this->base64Image;
     }
-    
+
     /**
      * @return CategoryDto[]|null
      */
@@ -49,16 +49,14 @@ class BookDto
     {
         return $this->categories;
     }
-    
+
     public function getDescription(): ?string
     {
         return $this->description;
     }
-    
+
     public function getScore(): ?int
     {
         return $this->score;
     }
-    
-    
 }
