@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
+use App\Entity\Book;
+use App\Entity\Book\Score;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -13,10 +15,10 @@ use Sonata\AdminBundle\Show\ShowMapper;
 final class BookAdmin extends AbstractAdmin
 {
     
-    /*public function getNewInstance(): object
+    public function createNewInstance(): object
     {
-        return Book::create('', null, '', null, null, [], []);
-    }*/
+        return Book::create('', null, '', new Score(), []);
+    }
     
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {

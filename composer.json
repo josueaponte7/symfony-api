@@ -22,6 +22,7 @@
     "ramsey/uuid-doctrine": "^1.8",
     "sensio/framework-extra-bundle": "^6.2",
     "sonata-project/admin-bundle": "^4.10",
+    "sonata-project/block-bundle": "^4.11",
     "sonata-project/doctrine-orm-admin-bundle": "^4.2",
     "symfony/asset": "5.4.*",
     "symfony/console": "5.4.*",

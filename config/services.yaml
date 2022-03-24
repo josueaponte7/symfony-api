@@ -28,7 +28,7 @@ services:
   admin.book:
     class: App\Admin\BookAdmin
     tags:
-      - { name: sonata.admin, model_class: App\Entity\Book, controller: ~, manager_type: orm, group: admin, label: "Libro" }
+      - { name: sonata.admin, model_class: App\Entity\Book, controller: App\Controller\Admin\CategoryAdminController, manager_type: orm, group: admin, label: "Libro" }
   
   App\EventListener\JWTCreatedListener:
     arguments: [ '@request_stack' ]

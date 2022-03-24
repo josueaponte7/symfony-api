@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 
+use App\Model\Book\BookRepositoryCriteria;
 use App\Model\Exception\Book\BookNotFound;
 use App\Repository\BookRepository;
 use App\Service\Book\BookFormProcessor;
@@ -10,7 +11,7 @@ use App\Service\Book\DeleteBook;
 use App\Service\Book\GetBook;
 use App\Service\Book\PatchBook;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\{Get, Patch, Post, Put};
+use FOS\RestBundle\Controller\Annotations\{Delete, Get, Post, Put};
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View as ViewAttribute;
 use FOS\RestBundle\View\View;
@@ -52,9 +53,16 @@ class BooksController extends AbstractFOSRestController
      * )
      */
     
-    public function list(BookRepository $bookRepository): array
+    public function list(BookRepository $bookRepository, Request $request): array
     {
-        return $bookRepository->findAll();
+        $categoryId = $request->query->get('categoryId');
+        $page = $request->query->get('page');
+        $itemsPerPage = $request->query->get('itemsPerPage');
+        $criteria = new BookRepositoryCriteria(
+            $categoryId,
+            $itemsPerPage !== null ? (int)$itemsPerPage : 10,
+            $page !== null ? (int)$page : 1,);
+        return $bookRepository->findByCriteria($criteria);
     }
     
     #[Post(path: "/books")]
@@ -148,7 +156,7 @@ class BooksController extends AbstractFOSRestController
         return View::create($book, Response::HTTP_CREATED);
     }
     
-    #[Patch(path: "/books/{id}")]
+    #[Delete(path: "/books/{id}")]
     #[ViewAttribute(serializerGroups: ['book'], serializerEnableMaxDepthChecks: true)]
     /**
      *
@@ -161,7 +169,7 @@ class BooksController extends AbstractFOSRestController
     {
         try {
             ($deleteBook)($id);
-        } catch(Throwable $e) {
+        } catch(Throwable) {
             return View::create(self::BOOK_NOT_FOUND, Response::HTTP_BAD_REQUEST);
         }
         return View::create(null, Response::HTTP_NO_CONTENT);

@@ -4,19 +4,27 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
+use App\Entity\Category;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 final class CategoryAdmin extends AbstractAdmin
 {
     
-    /*public function getNewInstance(): object
+    public function createNewInstance(): object
     {
         return Category::create('');
-    }*/
+    }
+    
+    protected function configureRoutes(RouteCollectionInterface $collection): void
+    {
+        $collection
+            ->add('clone', $this->getRouterIdParameter() . '/clone');
+    }
     
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
@@ -34,6 +42,9 @@ final class CategoryAdmin extends AbstractAdmin
                     'show' => [],
                     'edit' => [],
                     'delete' => [],
+                    'clone' => [
+                        'template' => 'admin/category/list__action_clone.html.twig',
+                    ],
                 ],
             ]);
     }
